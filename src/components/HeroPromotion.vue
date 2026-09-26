@@ -2,7 +2,7 @@
   <section id="home" class="relative bg-nezo-black text-white overflow-hidden">
     <!-- Main Carousel -->
     <div 
-      class="relative w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-[560px]"
+      class="relative w-full h-[440px] sm:h-[460px] md:h-[520px] lg:h-[560px]"
       @touchstart.passive="handleTouchStart"
       @touchend.passive="handleTouchEnd"
     >
@@ -21,21 +21,21 @@
           <!-- Gradient overlay for text contrast -->
           <div class="absolute inset-0 bg-gradient-to-r from-nezo-black via-nezo-black/75 to-transparent"></div>
 
-          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full py-10">
-            <div class="max-w-xl space-y-4 sm:space-y-6">
+          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full pt-10 pb-16 sm:py-10">
+            <div class="max-w-xl space-y-3 sm:space-y-6">
               <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-nezo-lime/10 border border-nezo-lime/40 backdrop-blur-md">
                 <span class="w-2 h-2 rounded-full bg-nezo-lime animate-ping"></span>
                 <span class="text-xs font-bold uppercase tracking-wider text-nezo-lime">Official Volley Apparel</span>
               </div>
               
-              <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight leading-[1.08] text-white">
+              <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight leading-[1.08] text-white">
                 YOUR TEAM. <br />
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-nezo-lime via-yellow-300 to-lime-400">
                   YOUR STYLE.
                 </span>
               </h1>
 
-              <p class="text-sm sm:text-base text-gray-300 line-clamp-3 sm:line-clamp-none max-w-lg font-normal leading-relaxed">
+              <p class="text-xs sm:text-base text-gray-300 line-clamp-3 sm:line-clamp-none max-w-lg font-normal leading-relaxed">
                 {{ localeStore.t('heroDesc1') }}
               </p>
 
@@ -43,7 +43,7 @@
               <div class="flex flex-wrap items-center gap-3 pt-2">
                 <a 
                   href="#portfolio" 
-                  class="px-6 py-3 rounded-full bg-nezo-lime hover:bg-lime-400 text-black font-extrabold text-sm shadow-glow-lime transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
+                  class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-nezo-lime hover:bg-lime-400 text-black font-extrabold text-xs sm:text-sm shadow-glow-lime transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
                 >
                   <span>{{ localeStore.t('heroBtnExplore') }}</span>
                   <ArrowRight class="w-4 h-4" />
@@ -51,7 +51,7 @@
 
                 <button 
                   @click="catalogStore.openInquiryModal()"
-                  class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/30 backdrop-blur-md transition-all inline-flex items-center gap-2"
+                  class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/30 backdrop-blur-md transition-all inline-flex items-center gap-2"
                 >
                   <MessageCircle class="w-4 h-4 text-emerald-400" />
                   <span>{{ localeStore.t('heroBtnInquire') }}</span>
@@ -59,7 +59,7 @@
               </div>
 
               <!-- Quick Badges -->
-              <div class="pt-4 flex items-center gap-4 text-xs text-gray-400">
+              <div class="pt-3 sm:pt-4 flex items-center gap-4 text-xs text-gray-400">
                 <div class="flex items-center gap-1.5">
                   <CheckCircle2 class="w-4 h-4 text-nezo-lime" />
                   <span>Bebas Nama & Nomor</span>
@@ -77,37 +77,37 @@
         <div class="w-full h-full shrink-0 relative flex items-center bg-gradient-to-r from-slate-950 via-slate-900 to-zinc-900">
           <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#ccff00_1px,transparent_1px)] [background-size:16px_16px]"></div>
           
-          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full py-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="max-w-xl space-y-4">
+          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full pt-10 pb-16 sm:py-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="max-w-xl space-y-3 sm:space-y-4">
               <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-wider">
                 Teknologi Kain Olahraga
               </span>
 
-              <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight text-white">
+              <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight text-white">
                 3 PILIHAN BAHAN <br />
                 <span class="text-nezo-lime">PREMIUM DRYFIT</span>
               </h2>
 
-              <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+              <p class="text-xs sm:text-base text-gray-300 leading-relaxed">
                 {{ localeStore.t('heroDesc2') }}
               </p>
 
-              <div class="flex flex-wrap gap-2 pt-2">
-                <span class="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold border border-white/20">
+              <div class="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
+                <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-white/10 text-white text-[11px] sm:text-xs font-semibold border border-white/20">
                   Dryfit Brazil (Micro-dot)
                 </span>
-                <span class="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold border border-white/20">
+                <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-white/10 text-white text-[11px] sm:text-xs font-semibold border border-white/20">
                   Dryfit Milano (Chevron)
                 </span>
-                <span class="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold border border-white/20">
+                <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-white/10 text-white text-[11px] sm:text-xs font-semibold border border-white/20">
                   Embos Topo (3D Contour)
                 </span>
               </div>
 
-              <div class="pt-2">
+              <div class="pt-2 sm:pt-3">
                 <a 
                   href="#fabrics"
-                  class="px-6 py-3 rounded-full bg-nezo-lime text-black font-extrabold text-sm hover:bg-lime-400 shadow-glow-lime transition-all inline-flex items-center gap-2"
+                  class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-nezo-lime text-black font-extrabold text-xs sm:text-sm hover:bg-lime-400 shadow-glow-lime transition-all inline-flex items-center gap-2"
                 >
                   <span>{{ localeStore.t('heroBtnFabric') }}</span>
                   <Layers class="w-4 h-4" />
@@ -142,18 +142,18 @@
           />
           <div class="absolute inset-0 bg-gradient-to-r from-nezo-black via-nezo-black/70 to-transparent"></div>
 
-          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full py-10">
-            <div class="max-w-xl space-y-4">
+          <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full pt-10 pb-16 sm:py-10">
+            <div class="max-w-xl space-y-3 sm:space-y-4">
               <span class="px-3 py-1 rounded-full bg-nezo-red/20 border border-nezo-red text-rose-300 text-xs font-bold uppercase tracking-wider">
                 Real Customer Showcase
               </span>
 
-              <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-white leading-tight">
+              <h2 class="text-2xl sm:text-4xl md:text-5xl font-display font-black tracking-tight text-white leading-tight">
                 DIPERCAYA TIM VOLI <br />
                 <span class="text-yellow-400">DI SELURUH INDONESIA</span>
               </h2>
 
-              <p class="text-sm sm:text-base text-gray-200 leading-relaxed">
+              <p class="text-xs sm:text-base text-gray-200 leading-relaxed">
                 {{ localeStore.t('heroDesc3') }}
               </p>
 
@@ -162,10 +162,10 @@
                 <span class="text-white text-xs font-bold ml-2">5.0 / 5.0 Rating Pelanggan</span>
               </div>
 
-              <div class="pt-2">
+              <div class="pt-2 sm:pt-3">
                 <a 
                   href="#reviews"
-                  class="px-6 py-3 rounded-full bg-white text-black font-extrabold text-sm hover:bg-gray-100 shadow transition-all inline-flex items-center gap-2"
+                  class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white text-black font-extrabold text-xs sm:text-sm hover:bg-gray-100 shadow transition-all inline-flex items-center gap-2"
                 >
                   <span>{{ localeStore.t('heroBtnReview') }}</span>
                   <Users class="w-4 h-4" />
