@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+  <div class="hidden lg:flex fixed bottom-6 right-6 z-40 flex flex-col items-end">
     <!-- Chat Bubble Hint (dismissible or hover) -->
     <div 
       v-if="showHint" 

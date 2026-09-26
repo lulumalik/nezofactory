@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50 text-slate-900 font-sans">
+  <div class="min-h-screen flex flex-col bg-gray-50 text-slate-900 font-sans pb-16 lg:pb-0">
     <!-- Header with Top Banner and Category Nav -->
     <AppHeader />
 
@@ -37,12 +37,15 @@
     <!-- Footer -->
     <AppFooter />
 
+    <!-- Fixed Mobile Bottom Navigation Bar (App Experience) -->
+    <AppBottomNav />
+
     <!-- Interactive Modals -->
     <ProductDetailModal />
     <WhatsAppModal />
     <ImageZoomModal />
 
-    <!-- Floating Action WhatsApp Button -->
+    <!-- Floating Action WhatsApp Button (Desktop only) -->
     <FloatingWhatsApp />
 
     <!-- Global Toast Notification -->
@@ -62,6 +65,7 @@
 import { onMounted } from 'vue'
 import { useCatalogStore } from './stores/catalog'
 import AppHeader from './components/AppHeader.vue'
+import AppBottomNav from './components/AppBottomNav.vue'
 import HeroPromotion from './components/HeroPromotion.vue'
 import ProductGrid from './components/ProductGrid.vue'
 import TextureSection from './components/TextureSection.vue'

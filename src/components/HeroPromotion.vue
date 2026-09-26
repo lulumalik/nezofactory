@@ -1,7 +1,11 @@
 <template>
   <section id="home" class="relative bg-nezo-black text-white overflow-hidden">
     <!-- Main Carousel -->
-    <div class="relative w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-[560px]">
+    <div 
+      class="relative w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-[560px]"
+      @touchstart.passive="handleTouchStart"
+      @touchend.passive="handleTouchEnd"
+    >
       <!-- Slides Container -->
       <div 
         class="flex w-full h-full transition-transform duration-700 ease-in-out"
@@ -172,19 +176,19 @@
         </div>
       </div>
 
-      <!-- Left Arrow Button (White round Matahari style) -->
+      <!-- Left Arrow Button (Hidden on Mobile, Visible on Tablet/Desktop) -->
       <button 
         @click="prevSlide" 
-        class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-gray-800 flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 z-20"
+        class="hidden md:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-gray-800 items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 z-20"
         aria-label="Previous Slide"
       >
         <ChevronLeft class="w-6 h-6" />
       </button>
 
-      <!-- Right Arrow Button (White round Matahari style) -->
+      <!-- Right Arrow Button (Hidden on Mobile, Visible on Tablet/Desktop) -->
       <button 
         @click="nextSlide" 
-        class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-gray-800 flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 z-20"
+        class="hidden md:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-gray-800 items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 z-20"
         aria-label="Next Slide"
       >
         <ChevronRight class="w-6 h-6" />
@@ -273,6 +277,29 @@ const nextSlide = () => {
 
 const prevSlide = () => {
   currentSlide.value = (currentSlide.value - 1 + totalSlides) % totalSlides
+}
+
+let touchStartX = 0
+let touchEndX = 0
+
+const handleTouchStart = (e) => {
+  if (e.changedTouches && e.changedTouches.length > 0) {
+    touchStartX = e.changedTouches[0].screenX
+  }
+}
+
+const handleTouchEnd = (e) => {
+  if (e.changedTouches && e.changedTouches.length > 0) {
+    touchEndX = e.changedTouches[0].screenX
+    const diff = touchEndX - touchStartX
+    if (Math.abs(diff) > 40) {
+      if (diff < 0) {
+        nextSlide()
+      } else {
+        prevSlide()
+      }
+    }
+  }
 }
 
 const jumpToFabric = (fabricId) => {

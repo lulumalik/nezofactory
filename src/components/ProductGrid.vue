@@ -15,10 +15,10 @@
           </h2>
         </div>
 
-        <!-- Direct WA Hotline Button -->
+        <!-- Direct WA Hotline Button (Desktop & Tablet; on mobile it is in bottom nav) -->
         <button 
           @click="catalogStore.openInquiryModal()"
-          class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all"
+          class="hidden sm:inline-flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all"
         >
           <MessageCircle class="w-4 h-4" />
           <span>{{ localeStore.t('consultDesign') }}</span>

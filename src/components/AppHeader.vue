@@ -32,19 +32,19 @@
     -->
 
     <!-- Main Navigation Header -->
-    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 sm:py-4">
       <div class="flex items-center justify-between gap-3 sm:gap-6">
         <!-- Logo -->
-        <a href="#home" @click.prevent="catalogStore.navigateTo('home')" class="flex items-center gap-3 group shrink-0">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black overflow-hidden flex items-center justify-center border-2 border-nezo-lime shadow-glow-lime transition-all duration-300 group-hover:scale-105 shrink-0">
+        <a href="#home" @click.prevent="catalogStore.navigateTo('home')" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-black overflow-hidden flex items-center justify-center border-2 border-nezo-lime shadow-glow-lime transition-all duration-300 group-hover:scale-105 shrink-0">
             <img :src="logoUrl" alt="NEZO FACTORY" class="w-full h-full object-cover" />
           </div>
           <div class="flex flex-col">
-            <div class="flex items-center gap-1.5">
-              <span class="font-display font-black text-2xl tracking-tight text-nezo-black">NEZO</span>
-              <span class="font-display font-extrabold text-xs tracking-wider uppercase px-1.5 py-0.5 bg-nezo-lime text-black rounded font-mono">FACTORY</span>
+            <div class="flex items-center gap-1 sm:gap-1.5">
+              <span class="font-display font-black text-xl sm:text-2xl tracking-tight text-nezo-black">NEZO</span>
+              <span class="font-display font-extrabold text-[10px] sm:text-xs tracking-wider uppercase px-1.5 py-0.5 bg-nezo-lime text-black rounded font-mono">FACTORY</span>
             </div>
-            <span class="text-[10px] tracking-widest text-gray-500 font-bold uppercase -mt-1">YOUR TEAM. YOUR STYLE.</span>
+            <span class="hidden sm:inline text-[10px] tracking-widest text-gray-500 font-bold uppercase -mt-0.5">YOUR TEAM. YOUR STYLE.</span>
           </div>
         </a>
 
@@ -88,10 +88,10 @@
             </button>
           </div>
 
-          <!-- Favorites / Wishlist -->
+          <!-- Favorites / Wishlist (Desktop only; on mobile it is in the bottom nav!) -->
           <button 
             @click="filterFavorites"
-            class="relative p-2 text-gray-700 hover:text-nezo-red transition-colors rounded-full hover:bg-gray-100"
+            class="hidden lg:block relative p-2 text-gray-700 hover:text-nezo-red transition-colors rounded-full hover:bg-gray-100"
             :title="localeStore.t('wishlist')"
           >
             <Heart class="w-5 h-5 sm:w-6 sm:h-6" :class="{'fill-nezo-red text-nezo-red': catalogStore.favorites.length > 0}" />
@@ -103,28 +103,19 @@
             </span>
           </button>
 
-          <!-- Direct WhatsApp Button -->
+          <!-- Direct WhatsApp Button (Desktop only; on mobile it is in bottom nav!) -->
           <button 
             @click="catalogStore.openInquiryModal()"
-            class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            class="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0"
           >
             <MessageCircle class="w-4 h-4" />
             <span>WhatsApp Order</span>
-          </button>
-
-          <!-- Mobile Menu Toggle -->
-          <button 
-            @click="isMobileMenuOpen = !isMobileMenuOpen"
-            class="lg:hidden p-2 text-gray-700 hover:text-black rounded-lg hover:bg-gray-100"
-          >
-            <Menu v-if="!isMobileMenuOpen" class="w-6 h-6" />
-            <X v-else class="w-6 h-6" />
           </button>
         </div>
       </div>
 
       <!-- Mobile Search (visible on small screens) -->
-      <div class="mt-3 md:hidden">
+      <div class="mt-2.5 md:hidden">
         <div class="relative w-full">
           <input 
             v-model="catalogStore.searchQuery"
