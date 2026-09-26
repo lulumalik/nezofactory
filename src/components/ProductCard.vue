@@ -55,16 +55,19 @@
     <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
       <div>
         <!-- Brand & Product Code -->
-        <div class="flex items-center justify-between text-[11px] font-semibold mb-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold mb-1.5 gap-1">
           <button 
             @click.stop="catalogStore.navigateTo('catalog', { code: product.code })"
-            class="tracking-wider font-mono font-black text-xs text-slate-900 bg-nezo-lime/30 hover:bg-nezo-lime px-2 py-0.5 rounded border border-nezo-lime/70 transition-colors flex items-center gap-1 shadow-2xs"
+            class="tracking-wider font-mono font-black text-[10px] sm:text-xs text-slate-900 bg-nezo-lime/30 hover:bg-nezo-lime px-1.5 sm:px-2 py-0.5 rounded border border-nezo-lime/70 transition-colors flex items-center gap-0.5 sm:gap-1 shadow-2xs whitespace-nowrap shrink-0"
             title="Lihat di Katalog & Salin Kode"
           >
-            <span>KODE: {{ product.code }}</span>
+            <span class="sm:hidden text-slate-500 font-bold text-[9px]">#</span>
+            <span class="hidden sm:inline">KODE: </span>
+            <span>{{ product.code }}</span>
           </button>
-          <span class="bg-gray-100 px-1.5 py-0.5 rounded text-[10px] text-gray-600 uppercase font-mono">
-            {{ product.category === 'lengan_pendek' ? 'Lengan Pendek' : 'Reguler' }}
+          <span class="bg-gray-100 px-1.5 py-0.5 rounded text-[10px] text-gray-600 uppercase font-mono whitespace-nowrap shrink-0">
+            <span class="sm:hidden">{{ product.category === 'lengan_pendek' ? 'Wanita' : 'Reguler' }}</span>
+            <span class="hidden sm:inline">{{ product.category === 'lengan_pendek' ? 'Lengan Pendek' : 'Reguler' }}</span>
           </span>
         </div>
 
@@ -77,39 +80,40 @@
         </h3>
 
         <!-- Feature note / Tagline -->
-        <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">
+        <p class="text-[10px] sm:text-[11px] text-gray-500 line-clamp-1 mt-0.5">
           {{ localeStore.t('freeCustomLabel') }} • Standar PBVSI
         </p>
 
         <!-- Color Swatch Dots (Matahari mockup style!) -->
-        <div class="mt-2.5 flex items-center gap-1.5">
+        <div class="mt-2 sm:mt-2.5 flex items-center gap-1.5">
           <div 
             v-for="(hex, cIdx) in product.colors" 
             :key="cIdx"
-            class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-inner shrink-0"
+            class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border border-gray-300 shadow-inner shrink-0"
             :style="{ backgroundColor: hex }"
             :title="`Warna palet: ${hex}`"
           ></div>
-          <span class="text-[10px] text-gray-400 ml-1">Bebas ubah warna</span>
+          <span class="text-[9px] sm:text-[10px] text-gray-400 ml-1 truncate">Bebas warna</span>
         </div>
       </div>
 
       <!-- Action Area (WhatsApp direct inquiry) -->
-      <div class="mt-3.5 pt-2.5 border-t border-gray-100 flex items-center gap-2">
+      <div class="mt-3.5 pt-2 sm:pt-2.5 border-t border-gray-100 flex items-center gap-1.5 sm:gap-2">
         <button 
           @click="catalogStore.openInquiryModal(product)"
-          class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95"
+          class="flex-1 min-w-0 py-2 px-2 sm:px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1 sm:gap-1.5 transition-all shadow-sm active:scale-95 whitespace-nowrap"
         >
-          <MessageCircle class="w-3.5 h-3.5" />
-          <span>{{ localeStore.t('inquireWA') }}</span>
+          <MessageCircle class="w-3.5 h-3.5 shrink-0" />
+          <span class="sm:hidden text-[11px] font-bold">{{ localeStore.t('inquireWAMobile') }}</span>
+          <span class="hidden sm:inline">{{ localeStore.t('inquireWA') }}</span>
         </button>
 
         <button 
           @click="catalogStore.openProductDetail(product)"
-          class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+          class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors shrink-0"
           :title="localeStore.t('viewDetail')"
         >
-          <Eye class="w-4 h-4" />
+          <Eye class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
       </div>
     </div>

@@ -66,6 +66,7 @@ export const useLocaleStore = defineStore('locale', () => {
       colorVariants: 'Warna Desain:',
       viewDetail: 'Lihat Detail',
       inquireWA: 'Tanya via WhatsApp',
+      inquireWAMobile: 'Tanya WA',
       savedToFav: 'Ditambahkan ke Favorit',
       removedFromFav: 'Dihapus dari Favorit',
 
@@ -236,6 +237,7 @@ export const useLocaleStore = defineStore('locale', () => {
       colorVariants: 'Design Colors:',
       viewDetail: 'View Details',
       inquireWA: 'Inquire on WhatsApp',
+      inquireWAMobile: 'Chat WA',
       savedToFav: 'Added to Favorites',
       removedFromFav: 'Removed from Favorites',
 
