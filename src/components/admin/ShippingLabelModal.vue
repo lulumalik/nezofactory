@@ -35,7 +35,7 @@
       </div>
 
       <!-- Main Layout: Form (Left) & A6 Preview (Right) -->
-      <div class="label-scroll-area p-4 sm:p-6 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start bg-slate-950/60">
+      <div class="label-scroll-area p-4 sm:p-6 overflow-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start bg-slate-950/60">
         
         <!-- Left Panel: Interactive Form Control (No-Print) -->
         <div class="no-print lg:col-span-6 bg-slate-800 border border-slate-700 rounded-xl p-4 sm:p-5 space-y-3 text-xs text-white">
@@ -246,7 +246,15 @@ const triggerPrint = () => {
       shippingNotes: order.value.shippingNotes
     })
   }
-  window.print()
+  window.scrollTo(0, 0)
+  const scrollArea = document.querySelector('.label-scroll-area')
+  if (scrollArea) {
+    scrollArea.scrollTop = 0
+    scrollArea.scrollLeft = 0
+  }
+  setTimeout(() => {
+    window.print()
+  }, 100)
 }
 
 const closeModal = () => {
@@ -257,6 +265,7 @@ const closeModal = () => {
 <style scoped>
 .shipping-label-a6 {
   width: 105mm;
+  min-width: 105mm;
   height: 148mm;
   max-width: 105mm;
   max-height: 148mm;
@@ -294,17 +303,19 @@ const closeModal = () => {
     overflow: visible !important;
     width: 105mm !important;
     min-width: 105mm !important;
+    max-width: 105mm !important;
     height: auto !important;
     min-height: 0 !important;
+    transform: none !important;
   }
 
   .label-modal-dialog {
     position: static !important;
     display: block !important;
-    max-width: none !important;
-    max-height: none !important;
-    width: 105mm !important;
+    max-width: 105mm !important;
     min-width: 105mm !important;
+    width: 105mm !important;
+    max-height: none !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -312,6 +323,7 @@ const closeModal = () => {
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible !important;
+    transform: none !important;
   }
 
   .label-scroll-area {
@@ -323,22 +335,30 @@ const closeModal = () => {
     overflow: visible !important;
     width: 105mm !important;
     min-width: 105mm !important;
+    max-width: 105mm !important;
     height: auto !important;
+    justify-content: normal !important;
+    transform: none !important;
   }
 
   .shipping-label-a6 {
     position: static !important;
     width: 105mm !important;
-    height: 148mm !important;
-    max-height: 148mm !important;
-    margin: 0 !important;
-    padding: 6mm !important;
+    min-width: 105mm !important;
+    max-width: 105mm !important;
+    height: 140mm !important;
+    max-height: 140mm !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 5mm !important;
     box-shadow: none !important;
     border: 3px solid black !important;
     background: #ffffff !important;
     box-sizing: border-box !important;
     page-break-after: avoid !important;
+    break-after: avoid !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
     overflow: hidden !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

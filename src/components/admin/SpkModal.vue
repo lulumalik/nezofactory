@@ -38,7 +38,7 @@
       </div>
 
       <!-- Scrollable Document View Container (Print target) -->
-      <div class="spk-scroll-area p-2 sm:p-4 overflow-y-auto flex justify-center bg-slate-950/60">
+      <div class="spk-scroll-area p-2 sm:p-4 overflow-auto flex justify-start sm:justify-center bg-slate-950/60">
         
         <!-- Main Paper Document (Image 2 Replica) -->
         <div class="spk-paper text-slate-900 border border-slate-200 rounded-lg bg-white flex flex-col justify-between">
@@ -554,7 +554,15 @@ const triggerPrint = () => {
       images: order.value.images
     })
   }
-  window.print()
+  window.scrollTo(0, 0)
+  const scrollArea = document.querySelector('.spk-scroll-area')
+  if (scrollArea) {
+    scrollArea.scrollTop = 0
+    scrollArea.scrollLeft = 0
+  }
+  setTimeout(() => {
+    window.print()
+  }, 100)
 }
 
 const closeModal = () => {
@@ -566,7 +574,8 @@ const closeModal = () => {
 /* Proportions matching Image 2 & DATA SPK.html */
 .spk-paper {
   width: 210mm;
-  min-height: 297mm;
+  min-width: 210mm;
+  min-height: 280mm;
   background: #ffffff;
   margin: 0 auto;
   padding: 8mm 10mm;
@@ -600,18 +609,20 @@ const closeModal = () => {
     overflow: visible !important;
     width: 210mm !important;
     min-width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
     min-height: 0 !important;
+    transform: none !important;
     z-index: auto !important;
   }
 
   .spk-modal-dialog {
     position: static !important;
     display: block !important;
-    max-width: none !important;
-    max-height: none !important;
-    width: 210mm !important;
+    max-width: 210mm !important;
     min-width: 210mm !important;
+    width: 210mm !important;
+    max-height: none !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -619,6 +630,7 @@ const closeModal = () => {
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible !important;
+    transform: none !important;
   }
 
   .spk-scroll-area {
@@ -630,27 +642,38 @@ const closeModal = () => {
     overflow: visible !important;
     width: 210mm !important;
     min-width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
+    justify-content: normal !important;
+    transform: none !important;
   }
 
   .no-print {
     display: none !important;
   }
 
-  /* SPK Paper starts at top: 0 with exact A4 dimensions */
+  /* 
+     Height is set to 272mm (with 25mm safety buffer from 297mm A4)
+     to guarantee Mobile Chrome & Android PDF Spooler NEVER split the container onto 2 pages.
+  */
   .spk-paper {
     position: static !important;
     width: 210mm !important;
-    height: 297mm !important;
-    max-height: 297mm !important;
+    min-width: 210mm !important;
+    max-width: 210mm !important;
+    height: 272mm !important;
+    max-height: 272mm !important;
+    min-height: 0 !important;
     box-shadow: none !important;
-    padding: 7mm 9mm !important;
-    margin: 0 !important;
+    padding: 6mm 8mm !important;
+    margin: 0 auto !important;
     border: none !important;
     border-radius: 0 !important;
     box-sizing: border-box !important;
     page-break-after: avoid !important;
+    break-after: avoid !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;

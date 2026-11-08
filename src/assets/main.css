@@ -45,12 +45,13 @@
 
 /* ==========================================================================
    GLOBAL PRINT OPTIMIZATION
-   Ensures printed modals (SPK, Invoice, Shipping Label) start at (0,0)
-   without top blank spaces or spilling into extra pages.
+   Ensures printed documents (SPK, Invoice, Shipping Label) start at (0,0)
+   without top blank spaces, horizontal shifts on mobile, or splitting into extra pages.
    ========================================================================== */
 @media print {
   @page {
-    margin: 0;
+    size: A4 portrait;
+    margin: 0mm;
   }
 
   html, body {
@@ -58,12 +59,16 @@
     padding: 0 !important;
     background: #ffffff !important;
     color: #000000 !important;
-    width: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
   }
 
   /* Completely remove background UI from the layout calculation */
@@ -79,6 +84,9 @@
   }
 
   .app-root-layout {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-width: 210mm !important;
     min-height: 0 !important;
     height: auto !important;
     margin: 0 !important;
@@ -87,4 +95,5 @@
     background: transparent !important;
   }
 }
+
 

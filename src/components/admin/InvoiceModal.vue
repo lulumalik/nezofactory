@@ -64,7 +64,7 @@
       </div>
 
       <!-- Scrollable Preview Area -->
-      <div class="invoice-scroll-area p-2 sm:p-5 overflow-y-auto flex justify-center bg-slate-950/60">
+      <div class="invoice-scroll-area p-2 sm:p-5 overflow-auto flex justify-start sm:justify-center bg-slate-950/60">
         
         <!-- Physical Invoice Paper (Strict 1 Page A4 Portrait - 210mm x 297mm) -->
         <div class="invoice-paper border-2 border-black bg-white text-black flex flex-col justify-between">
@@ -241,7 +241,15 @@ const triggerPrint = () => {
       paymentNotes: order.value.paymentNotes
     })
   }
-  window.print()
+  window.scrollTo(0, 0)
+  const scrollArea = document.querySelector('.invoice-scroll-area')
+  if (scrollArea) {
+    scrollArea.scrollTop = 0
+    scrollArea.scrollLeft = 0
+  }
+  setTimeout(() => {
+    window.print()
+  }, 100)
 }
 
 const closeModal = () => {
@@ -253,8 +261,8 @@ const closeModal = () => {
 /* STRICT A4 PORTRAIT DIMENSIONS: 210mm x 297mm */
 .invoice-paper {
   width: 210mm;
-  height: 297mm;
-  max-height: 297mm;
+  min-width: 210mm;
+  min-height: 280mm;
   box-sizing: border-box;
   padding: 6mm 8mm;
   display: flex;
@@ -289,17 +297,19 @@ const closeModal = () => {
     overflow: visible !important;
     width: 210mm !important;
     min-width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
     min-height: 0 !important;
+    transform: none !important;
   }
 
   .invoice-modal-dialog {
     position: static !important;
     display: block !important;
-    max-width: none !important;
-    max-height: none !important;
-    width: 210mm !important;
+    max-width: 210mm !important;
     min-width: 210mm !important;
+    width: 210mm !important;
+    max-height: none !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -307,6 +317,7 @@ const closeModal = () => {
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible !important;
+    transform: none !important;
   }
 
   .invoice-scroll-area {
@@ -318,23 +329,38 @@ const closeModal = () => {
     overflow: visible !important;
     width: 210mm !important;
     min-width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
+    justify-content: normal !important;
+    transform: none !important;
   }
 
+  /* 
+     Height is set to 272mm (with 25mm safety buffer from 297mm A4)
+     to guarantee Mobile Chrome & Android PDF Spooler NEVER split the flex container onto 2 pages.
+  */
   .invoice-paper {
     position: static !important;
     width: 210mm !important;
-    height: 297mm !important;
-    max-height: 297mm !important;
-    margin: 0 !important;
+    min-width: 210mm !important;
+    max-width: 210mm !important;
+    height: 272mm !important;
+    max-height: 272mm !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
     padding: 6mm 8mm !important;
     box-shadow: none !important;
     border: 2px solid black !important;
     background: #ffffff !important;
     page-break-after: avoid !important;
+    break-after: avoid !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
