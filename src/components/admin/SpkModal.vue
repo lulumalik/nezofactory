@@ -598,7 +598,8 @@ const closeModal = () => {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
     min-height: 0 !important;
     z-index: auto !important;
@@ -607,9 +608,10 @@ const closeModal = () => {
   .spk-modal-dialog {
     position: static !important;
     display: block !important;
-    max-width: 100% !important;
+    max-width: none !important;
     max-height: none !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -626,7 +628,8 @@ const closeModal = () => {
     margin: 0 !important;
     background: transparent !important;
     overflow: visible !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
   }
 
@@ -642,7 +645,7 @@ const closeModal = () => {
     max-height: 297mm !important;
     box-shadow: none !important;
     padding: 7mm 9mm !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     border: none !important;
     border-radius: 0 !important;
     box-sizing: border-box !important;

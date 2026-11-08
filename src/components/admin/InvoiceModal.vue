@@ -287,7 +287,8 @@ const closeModal = () => {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
     min-height: 0 !important;
   }
@@ -295,9 +296,10 @@ const closeModal = () => {
   .invoice-modal-dialog {
     position: static !important;
     display: block !important;
-    max-width: 100% !important;
+    max-width: none !important;
     max-height: none !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -314,7 +316,8 @@ const closeModal = () => {
     margin: 0 !important;
     background: transparent !important;
     overflow: visible !important;
-    width: 100% !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
     height: auto !important;
   }
 
@@ -323,7 +326,7 @@ const closeModal = () => {
     width: 210mm !important;
     height: 297mm !important;
     max-height: 297mm !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     padding: 6mm 8mm !important;
     box-shadow: none !important;
     border: 2px solid black !important;
