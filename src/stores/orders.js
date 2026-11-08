@@ -99,7 +99,7 @@ export const useOrdersStore = defineStore('orders', () => {
 
   // Transform client model (camelCase) to Supabase row (snake_case)
   const mapToSupabase = (order) => ({
-    id: order.id,
+    ...(order.id ? { id: order.id } : {}),
     date: order.date,
     deadline: order.deadline || null,
     team: order.team,
@@ -210,7 +210,9 @@ export const useOrdersStore = defineStore('orders', () => {
 
   // Pure Online CRUD: Directly into Supabase
   const addOrder = async (orderData) => {
-    const id = orderData.id || getNextTrxId()
+    // Let the database sequence assign IDs so stale forms and concurrent inserts
+    // cannot generate the same primary key.
+    const id = supabase ? null : (orderData.id || getNextTrxId())
     const newOrder = {
       id,
       date: orderData.date || getTodayDateString(),
@@ -246,11 +248,18 @@ export const useOrdersStore = defineStore('orders', () => {
     if (supabase) {
       try {
         const payload = mapToSupabase(newOrder)
-        const { error } = await supabase.from('orders').insert([payload])
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([payload])
+          .select()
+          .single()
         if (error) {
           console.error('Supabase insert error:', error)
           throw error
         }
+        const savedOrder = mapFromSupabase(data)
+        orders.value.unshift(savedOrder)
+        return savedOrder
       } catch (e) {
         console.error('Supabase insert exception:', e)
         throw e

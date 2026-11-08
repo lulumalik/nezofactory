@@ -262,10 +262,10 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">No. Transaksi</label>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">No. Transaksi (otomatis)</label>
                 <input 
                   type="text" 
-                  v-model="formOrder.id" 
+                  :value="formOrder.id || 'Dibuat saat disimpan'"
                   readonly 
                   class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs font-mono font-bold text-nezo-lime outline-none"
                 />
@@ -730,7 +730,6 @@ const saveNewOrder = async () => {
   }
 
   const newOrder = await ordersStore.addOrder({
-    id: formOrder.value.id,
     date: formOrder.value.date,
     team: formOrder.value.team,
     contact: formOrder.value.contact,

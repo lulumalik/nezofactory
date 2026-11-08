@@ -38,6 +38,39 @@ CREATE TABLE IF NOT EXISTS public.orders (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Generate transaction IDs in the database to avoid collisions between clients.
+CREATE SEQUENCE IF NOT EXISTS public.orders_id_seq;
+
+DO $$
+DECLARE
+    current_max BIGINT;
+BEGIN
+    SELECT COALESCE(MAX((substring(id from '[0-9]+$'))::BIGINT), 0)
+    INTO current_max
+    FROM public.orders
+    WHERE id ~ '[0-9]+$';
+
+    PERFORM setval('public.orders_id_seq', GREATEST(current_max + 1, 1), false);
+END $$;
+
+CREATE OR REPLACE FUNCTION public.assign_order_id()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF NEW.id IS NULL OR btrim(NEW.id) = '' THEN
+        NEW.id := 'TRX-NZ-' || lpad(nextval('public.orders_id_seq')::TEXT, 5, '0');
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS assign_order_id_trigger ON public.orders;
+CREATE TRIGGER assign_order_id_trigger
+    BEFORE INSERT ON public.orders
+    FOR EACH ROW
+    EXECUTE FUNCTION public.assign_order_id();
+
 -- 2. Aktifkan Row Level Security (RLS)
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
