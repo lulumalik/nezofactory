@@ -856,6 +856,8 @@ export const useCatalogStore = defineStore('catalog', () => {
           if (v) url.searchParams.set(k, v)
         }
         setOrderDetailFromParams(url.searchParams)
+      } else if (view === 'admin') {
+        url.searchParams.set('view', 'admin')
       }
       window.history.pushState({}, '', url.toString())
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -878,6 +880,8 @@ export const useCatalogStore = defineStore('catalog', () => {
         if (code) {
           catalogCodeFilter.value = code
         }
+      } else if (view === 'admin' || hash.startsWith('#admin')) {
+        currentView.value = 'admin'
       } else {
         currentView.value = 'home'
       }

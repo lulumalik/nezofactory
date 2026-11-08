@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice 1 Halaman - NEZO FACTORY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* STRICT 1 PAGE A4 PRINT SPECS */
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+
+        .invoice-paper {
+            width: 210mm;
+            height: 281mm; /* Pas untuk tinggi bersih A4 dikurangi margin */
+            max-height: 281mm;
+            background-color: #ffffff;
+            color: #000000;
+            box-sizing: border-box;
+            padding: 8mm;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-text {
+            font-style: italic;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 0.85;
+        }
+
+        /* Print Override - Paksa Cetak 1 Halaman Pas */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                display: block !important;
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .invoice-paper {
+                box-shadow: none !important;
+                width: 210mm !important;
+                height: 281mm !important;
+                max-height: 281mm !important;
+                padding: 4mm 8mm !important;
+                margin: 0 !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <header class="no-print bg-slate-900 border-b border-slate-800 text-white py-2.5 px-6 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <span class="text-lg font-black italic tracking-wider text-amber-400">NEZO FACTORY</span>
+            <span class="bg-slate-800 text-amber-400 border border-amber-400/30 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">
+                Format Pas 1 Halaman A4
+            </span>
+        </div>
+        <div class="text-xs text-slate-400 hidden sm:block">
+            Tekan Tombol Cetak untuk Menyimpan PDF
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 md:p-5 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left Panel: Form Control -->
+        <section class="no-print lg:col-span-5 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-xl shadow-xl p-5 space-y-4">
+            <div class="flex justify-between items-center pb-2.5 border-b border-slate-700">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h2 class="text-base font-black uppercase text-white tracking-tight">Input Data Invoice</h2>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="loadSampleData()" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-1.5 px-2.5 rounded transition-colors">
+                        Isi Contoh
+                    </button>
+                    <button onclick="resetForm()" class="text-[11px] bg-slate-700 hover:bg-red-900/50 text-red-300 font-bold py-1.5 px-2.5 rounded transition-colors">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <form id="invoiceForm" class="space-y-3" onsubmit="event.preventDefault()">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">No. Invoice</label>
+                        <input type="text" id="inputInvNo" value="INV/NZ/2026/001" oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-bold uppercase text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Tanggal</label>
+                        <input type="date" id="inputInvDate" onchange="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-bold text-white outline-none">
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-700 pt-2.5 space-y-2.5">
+                    <h3 class="text-[11px] font-black uppercase text-amber-400 tracking-wider">Informasi Pelanggan</h3>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Nama Client / Tim</label>
+                            <input type="text" id="inputClientName" placeholder="Cth: FC Barcelona" oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-semibold text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">No. Kontak / HP</label>
+                            <input type="text" id="inputClientPhone" placeholder="Cth: 081234567890" oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-semibold text-white outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Alamat Tagihan / Pengiriman</label>
+                        <input type="text" id="inputClientAddress" placeholder="Cth: Jl. Kebon Sirih No. 12" oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-semibold text-white outline-none">
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-700 pt-2.5 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-[11px] font-black uppercase text-amber-400 tracking-wider">Daftar Pesanan & Ukuran</h3>
+                        <button type="button" onclick="addItemRow()" class="text-[11px] bg-amber-400 text-black font-extrabold px-2 py-1 rounded hover:bg-amber-300 transition-colors">
+                            + Tambah Item
+                        </button>
+                    </div>
+
+                    <div id="itemsContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Dynamic Rows Here -->
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-700 pt-2.5">
+                    <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Uang Muka / DP Dibayar (Rp)</label>
+                    <input type="number" id="inputDp" value="0" min="0" oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-bold text-white outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Catatan / Instruksi Pembayaran</label>
+                    <textarea id="inputNotes" rows="2" placeholder="Cth: Rek BCA 123456789 a.n NEZO FACTORY." oninput="updateInvoice()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-1.5 text-xs font-semibold text-white outline-none resize-none"></textarea>
+                </div>
+
+                <div class="pt-1">
+                    <button type="button" onclick="window.print()" class="w-full bg-amber-400 hover:bg-amber-300 text-black font-black uppercase tracking-wider py-3 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span>Cetak PDF (Pas 1 Halaman)</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Right Panel: Physical Invoice Preview (Strictly 1 Page A4) -->
+        <section class="print-container lg:col-span-7 flex flex-col items-center justify-center">
+            <div class="no-print mb-3 text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Preview Pas 1 Halaman A4 (Siap Cetak / Print)
+            </div>
+
+            <!-- Paper Invoice Container -->
+            <div class="invoice-paper border-2 border-black">
+                
+                <!-- Header -->
+                <div>
+                    <div class="flex justify-between items-start border-b-2 border-black pb-3 mb-3">
+                        <div>
+                            <div class="logo-text text-2xl uppercase tracking-tighter text-black">
+                                NEZO FACTORY
+                            </div>
+                            <div class="text-[9px] font-black tracking-widest uppercase text-black mt-0.5">
+                                YOUR TEAM. YOUR STYLE
+                            </div>
+                            <div class="text-[10.5px] font-bold leading-tight text-gray-800 mt-1.5">
+                                Jl.Cikuda no.13 Rt 4/11, Kel.Pasirbiru Kec.Cibiru, Kota Bandung 40615<br>
+                                WhatsApp: 08998116726
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <h1 class="text-xl font-black uppercase tracking-tight text-black">INVOICE</h1>
+                            <div id="previewInvNo" class="text-xs font-extrabold text-black">INV/NZ/2026/001</div>
+                            <div id="previewInvDate" class="text-[10.5px] font-bold text-gray-700 mt-0.5">Tanggal: -</div>
+                        </div>
+                    </div>
+
+                    <!-- Client Info Box -->
+                    <div class="grid grid-cols-2 gap-3 border-2 border-black p-2.5 mb-3.5 bg-gray-50">
+                        <div>
+                            <span class="text-[9.5px] font-black uppercase text-gray-500 block">Ditagihkan Kepada:</span>
+                            <div id="previewClientName" class="text-xs font-black text-black uppercase">[Nama Client]</div>
+                            <div id="previewClientPhone" class="text-[10.5px] font-bold text-gray-800">[No. WhatsApp / HP]</div>
+                        </div>
+                        <div>
+                            <span class="text-[9.5px] font-black uppercase text-gray-500 block">Alamat Pengiriman / Tagihan:</span>
+                            <div id="previewClientAddress" class="text-[10.5px] font-bold text-gray-800">[Alamat Lengkap Client]</div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <table class="w-full text-left border-collapse border-2 border-black mb-3.5">
+                        <thead>
+                            <tr class="bg-black text-white text-[11px] uppercase">
+                                <th class="p-1.5 border border-black text-center w-8">No</th>
+                                <th class="p-1.5 border border-black">Deskripsi Pesanan / Barang</th>
+                                <th class="p-1.5 border border-black text-center w-24">Ukuran / Detail</th>
+                                <th class="p-1.5 border border-black text-center w-12">Qty</th>
+                                <th class="p-1.5 border border-black text-right w-20">Harga</th>
+                                <th class="p-1.5 border border-black text-right w-24">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewTableBody" class="text-[11px] font-bold text-black">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary & Signatures Footer -->
+                <div>
+                    <div class="grid grid-cols-12 gap-3 mb-3.5">
+                        <!-- Notes & Bank Info -->
+                        <div class="col-span-7 border-2 border-black p-2.5 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9.5px] font-black uppercase text-gray-500 block mb-0.5">Catatan & Pembayaran:</span>
+                                <div id="previewNotes" class="text-[10.5px] font-medium text-gray-900 whitespace-pre-line leading-relaxed"></div>
+                            </div>
+                        </div>
+
+                        <!-- Calculation Table -->
+                        <div class="col-span-5 border-2 border-black p-2.5 text-[11px] font-bold space-y-1 bg-gray-50">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal:</span>
+                                <span id="previewSubtotal" class="font-extrabold text-black">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Uang Muka / DP:</span>
+                                <span id="previewDp" class="font-extrabold text-emerald-700">- Rp 0</span>
+                            </div>
+                            <div class="border-t-2 border-black pt-1 flex justify-between text-xs font-black">
+                                <span>SISA PELUNASAN:</span>
+                                <span id="previewGrandTotal" class="text-black">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer / Signatures -->
+                    <div class="grid grid-cols-2 text-center text-[11px] font-bold pt-2.5 border-t-2 border-black">
+                        <div>
+                            <p class="mb-7">Penerima / Hormat Kami,</p>
+                            <p class="font-black uppercase tracking-wider">( .................................... )</p>
+                        </div>
+                        <div>
+                            <p class="mb-7">NEZO FACTORY</p>
+                            <p class="font-black uppercase tracking-wider">( Admin Operational )</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="no-print bg-slate-900 border-t border-slate-800 py-2.5 text-center text-xs text-slate-500">
+        &copy; 2026 NEZO FACTORY Logistics & Billing System.
+    </footer>
+
+    <script>
+        let itemIndex = 0;
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        function addItemRow(desc = '', customCol = '', qty = 1, price = 0) {
+            itemIndex++;
+            const container = document.getElementById('itemsContainer');
+            const row = document.createElement('div');
+            row.id = `itemRow_${itemIndex}`;
+            row.className = "bg-slate-900 p-2 rounded border border-slate-700 space-y-1.5";
+            row.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase">Item #${itemIndex}</span>
+                    <button type="button" onclick="removeItemRow('${itemIndex}')" class="text-red-400 hover:text-red-300 font-bold text-[10px] uppercase px-1 py-0.5 bg-red-950/50 rounded border border-red-800/50">Hapus</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-1.5">
+                    <input type="text" placeholder="Nama Barang" value="${desc}" oninput="updateInvoice()" class="item-desc sm:col-span-6 bg-slate-800 border border-slate-600 rounded p-1 text-xs text-white outline-none font-semibold">
+                    <input type="text" placeholder="Ukuran / Detail" value="${customCol}" oninput="updateInvoice()" class="item-custom sm:col-span-6 bg-slate-800 border border-slate-600 rounded p-1 text-xs text-white outline-none font-semibold">
+                </div>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="updateInvoice()" class="item-qty bg-slate-800 border border-slate-600 rounded p-1 text-xs text-white text-center outline-none font-bold">
+                    <input type="number" placeholder="Harga" value="${price}" min="0" oninput="updateInvoice()" class="item-price bg-slate-800 border border-slate-600 rounded p-1 text-xs text-white outline-none font-bold">
+                </div>
+            `;
+            container.appendChild(row);
+            updateInvoice();
+        }
+
+        function removeItemRow(id) {
+            const row = document.getElementById(`itemRow_${id}`);
+            if (row) {
+                row.remove();
+                updateInvoice();
+            }
+        }
+
+        function updateInvoice() {
+            const invNo = document.getElementById('inputInvNo').value.trim();
+            const invDate = document.getElementById('inputInvDate').value;
+            const clientName = document.getElementById('inputClientName').value.trim();
+            const clientPhone = document.getElementById('inputClientPhone').value.trim();
+            const clientAddress = document.getElementById('inputClientAddress').value.trim();
+            const notes = document.getElementById('inputNotes').value.trim();
+
+            document.getElementById('previewInvNo').innerText = invNo || 'INV/NZ/2026/001';
+            document.getElementById('previewInvDate').innerText = `Tanggal: ${invDate || '-'}`;
+            document.getElementById('previewClientName').innerText = clientName || '[Nama Client]';
+            document.getElementById('previewClientPhone').innerText = clientPhone || '[No. WhatsApp / HP]';
+            document.getElementById('previewClientAddress').innerText = clientAddress || '[Alamat Lengkap Client]';
+            document.getElementById('previewNotes').innerText = notes || 'Terima kasih telah berbelanja di NEZO FACTORY.';
+
+            const rows = document.querySelectorAll('#itemsContainer > div');
+            const tbody = document.getElementById('previewTableBody');
+            tbody.innerHTML = '';
+
+            let subtotal = 0;
+
+            if (rows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-2 text-center text-gray-400 italic">Belum ada barang diinputkan</td></tr>`;
+            } else {
+                rows.forEach((row, idx) => {
+                    const desc = row.querySelector('.item-desc').value.trim() || 'Item ' + (idx + 1);
+                    const customCol = row.querySelector('.item-custom').value.trim() || '-';
+                    const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                    const total = qty * price;
+                    subtotal += total;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-black";
+                    tr.innerHTML = `
+                        <td class="p-1.5 border border-black text-center">${idx + 1}</td>
+                        <td class="p-1.5 border border-black">${desc}</td>
+                        <td class="p-1.5 border border-black text-center font-medium">${customCol}</td>
+                        <td class="p-1.5 border border-black text-center">${qty}</td>
+                        <td class="p-1.5 border border-black text-right">${formatRupiah(price)}</td>
+                        <td class="p-1.5 border border-black text-right">${formatRupiah(total)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            const dp = parseFloat(document.getElementById('inputDp').value) || 0;
+            const grandTotal = subtotal - dp;
+
+            document.getElementById('previewSubtotal').innerText = formatRupiah(subtotal);
+            document.getElementById('previewDp').innerText = `- ${formatRupiah(dp)}`;
+            document.getElementById('previewGrandTotal').innerText = formatRupiah(grandTotal < 0 ? 0 : grandTotal);
+        }
+
+        function loadSampleData() {
+            document.getElementById('inputInvNo').value = 'INV/NZ/2026/088';
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputInvDate').value = today;
+
+            document.getElementById('inputClientName').value = 'Bandung Futsal Club';
+            document.getElementById('inputClientPhone').value = '081298765432';
+            document.getElementById('inputClientAddress').value = 'Jl. Soekarno Hatta No. 402, Bandung';
+            document.getElementById('inputDp').value = '500000';
+            document.getElementById('inputNotes').value = 'Transfer Bank BCA: 123-456-7890 a.n NEZO FACTORY.';
+
+            document.getElementById('itemsContainer').innerHTML = '';
+            itemIndex = 0;
+            addItemRow('Jersey Custom Premium', 'Size L (12 Pcs)', 12, 135000);
+            addItemRow('Jersey Custom Premium', 'Size XL (6 Pcs)', 6, 140000);
+            addItemRow('Celana Match Kit', 'All Size (18 Pcs)', 18, 45000);
+        }
+
+        function resetForm() {
+            document.getElementById('invoiceForm').reset();
+            document.getElementById('itemsContainer').innerHTML = '';
+            itemIndex = 0;
+            addItemRow('', '', 1, 0);
+            updateInvoice();
+        }
+
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputInvDate').value = today;
+            addItemRow('Jersey Custom Tim (Setelan)', 'Size L', 10, 150000);
+            updateInvoice();
+        }
+    </script>
+</body>
+</html>

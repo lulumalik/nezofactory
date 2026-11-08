@@ -42,3 +42,49 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* ==========================================================================
+   GLOBAL PRINT OPTIMIZATION
+   Ensures printed modals (SPK, Invoice, Shipping Label) start at (0,0)
+   without top blank spaces or spilling into extra pages.
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Completely remove background UI from the layout calculation */
+  .app-main-content,
+  .app-header-print-hide,
+  .app-footer-print-hide,
+  .app-nav-print-hide,
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  .app-root-layout {
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    background: transparent !important;
+  }
+}
+

@@ -111,6 +111,16 @@
             <MessageCircle class="w-4 h-4" />
             <span>WhatsApp Order</span>
           </button>
+
+          <!-- Admin Portal Access Button -->
+          <button 
+            @click="catalogStore.navigateTo('admin')"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 hover:bg-black text-nezo-lime text-xs font-bold transition border border-slate-700 shadow-sm"
+            title="Buka Portal Admin & Data Pesanan"
+          >
+            <ShieldCheck class="w-3.5 h-3.5" />
+            <span class="hidden sm:inline">Admin</span>
+          </button>
         </div>
       </div>
 
@@ -286,7 +296,7 @@ import { useCatalogStore } from '../stores/catalog'
 import { useLocaleStore } from '../stores/locale'
 import logoUrl from '@/assets/logo.jpeg'
 import { 
-  Search, Heart, MessageCircle, Globe, Menu, X, ChevronRight, PhoneCall, Tag 
+  Search, Heart, MessageCircle, Globe, Menu, X, ChevronRight, PhoneCall, Tag, ShieldCheck 
 } from 'lucide-vue-next'
 
 const catalogStore = useCatalogStore()

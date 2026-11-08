@@ -137,7 +137,13 @@
       <div class="mt-12 pt-6 border-t border-nezo-border flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-3">
         <p>{{ localeStore.t('footerCopyright') }}</p>
         <div class="flex items-center gap-4 text-xs">
-          <span class="text-gray-400">Kustom Volley Portofolio Web App</span>
+          <button 
+            @click="catalogStore.navigateTo('admin')" 
+            class="text-gray-400 hover:text-nezo-lime transition-colors flex items-center gap-1 font-bold"
+          >
+            <ShieldCheck class="w-3.5 h-3.5" />
+            <span>Portal Admin & SPK</span>
+          </button>
           <span>•</span>
           <span class="text-nezo-lime font-mono">NEZO FACTORY</span>
         </div>
@@ -152,7 +158,7 @@ import { useLocaleStore } from '../stores/locale'
 import logoUrl from '@/assets/logo.jpeg'
 import { 
   PhoneCall, Clock, MapPin, MessageCircle, 
-  Instagram, Facebook, Share2 
+  Instagram, Facebook, Share2, ShieldCheck 
 } from 'lucide-vue-next'
 
 const catalogStore = useCatalogStore()

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Label Pengiriman Ukuran A6 - NEZO FACTORY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Standard A6 Thermal Paper Dimensions */
+        @page {
+            size: 105mm 148mm;
+            margin: 0;
+        }
+
+        /* Label Canvas Container - Optimized for Perfect Centering */
+        .shipping-label-a6 {
+            width: 105mm;
+            height: 148mm;
+            max-width: 105mm;
+            max-height: 148mm;
+            background-color: #ffffff;
+            color: #000000;
+            border: 3px solid #000000;
+            box-sizing: border-box;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 8mm;
+            margin: 0 auto;
+            gap: 5px;
+        }
+
+        .logo-text {
+            font-style: italic;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 0.85;
+        }
+
+        /* Clean crisp borders for thermal printing */
+        .border-crisp {
+            border: 2px solid #000000 !important;
+        }
+
+        /* Print & PDF Export Rules - Centered Perfectly */
+        @media print {
+            html, body {
+                width: 105mm !important;
+                height: 148mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .print-container {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 105mm !important;
+                height: 148mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                background: #ffffff !important;
+            }
+
+            .shipping-label-a6 {
+                box-shadow: none !important;
+                border: 3px solid #000000 !important;
+                width: 105mm !important;
+                height: 148mm !important;
+                margin: 0 auto !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <header class="no-print bg-slate-900 border-b border-slate-800 text-white py-3 px-6 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <span class="text-xl font-black italic tracking-wider text-amber-400">NEZO FACTORY</span>
+            <span class="bg-slate-800 text-amber-400 border border-amber-400/30 text-xs font-bold px-2.5 py-1 rounded uppercase tracking-widest">
+                Stiker A6 (10.5 x 14.8 cm)
+            </span>
+        </div>
+        <div class="text-xs text-slate-400 hidden sm:block">
+            Generator Resi Cetak Thermal / Sticker Label Ukuran A6 (105mm x 148mm)
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Panel: Interactive Form Control -->
+        <section class="no-print lg:col-span-6 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-xl shadow-xl p-6">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-700">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <h2 class="text-lg font-black uppercase text-white tracking-tight">Input Data Resi Paket</h2>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="loadSampleData()" class="text-xs bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-1.5 px-3 rounded transition-colors">
+                        Isi Contoh
+                    </button>
+                    <button onclick="resetForm()" class="text-xs bg-slate-700 hover:bg-red-900/50 text-red-300 font-bold py-1.5 px-3 rounded transition-colors">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <form id="labelForm" class="space-y-4" onsubmit="event.preventDefault()">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Kode Transaksi (TRX)</label>
+                    <input type="text" id="inputTrx" value="TRX-NZ-00001" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-bold uppercase text-white outline-none transition-colors">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Nama Penerima</label>
+                        <input type="text" id="inputPenerima" placeholder="Cth: Budi Santoso" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">WhatsApp / HP</label>
+                        <input type="text" id="inputWhatsapp" placeholder="Cth: 081234567890" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Alamat Lengkap</label>
+                    <input type="text" id="inputAlamat" placeholder="Cth: Jl. Raya Kebayoran No. 45 Blok B2" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Kelurahan</label>
+                        <input type="text" id="inputKelurahan" placeholder="Cth: Sukajadi" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Kecamatan</label>
+                        <input type="text" id="inputKecamatan" placeholder="Cth: Sukasari" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Kota / Kabupaten</label>
+                        <input type="text" id="inputKota" placeholder="Cth: Kota Bandung" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Provinsi</label>
+                        <input type="text" id="inputProvinsi" placeholder="Cth: Jawa Barat" oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Catatan Tambahan Paket</label>
+                    <textarea id="inputCatatan" rows="3" placeholder="Cth: Fragile / Pakaian Custom No. Order 99. Harap hubungi sebelum mengantar." oninput="updateLabel()" class="w-full bg-slate-900 border border-slate-600 focus:border-amber-400 rounded p-2.5 text-sm font-semibold text-white outline-none transition-colors resize-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="button" onclick="window.print()" class="w-full bg-amber-400 hover:bg-amber-300 text-black font-black uppercase tracking-wider py-3.5 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span>Cetak / Simpan PDF (Ukuran A6 Presisi)</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Right Panel: Physical A6 Label Preview -->
+        <section class="print-container lg:col-span-6 flex flex-col items-center justify-center">
+            <div class="no-print mb-3 text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Preview Cetak Real-Time (Ukuran A6: 10.5 cm x 14.8 cm)
+            </div>
+
+            <!-- Physical Shipping Label Container A6 -->
+            <div class="shipping-label-a6">
+                
+                <!-- 1. Header Section: Brand Logo & Warehouse Address -->
+                <div class="grid grid-cols-2 border-crisp p-2 bg-white">
+                    <!-- Left: NEZO FACTORY Logo -->
+                    <div class="flex flex-col justify-center pr-2 border-r-2 border-black">
+                        <div class="logo-text text-2xl uppercase tracking-tighter text-black">
+                            NEZO
+                        </div>
+                        <div class="logo-text text-2xl uppercase tracking-tighter text-black">
+                            FACTORY
+                        </div>
+                        <div class="text-[8.5px] font-black tracking-wider uppercase mt-1 text-black">
+                            YOUR TEAM. YOUR STYLE
+                        </div>
+                    </div>
+
+                    <!-- Right: Sender Warehouse Address -->
+                    <div class="flex flex-col justify-center pl-2 text-[9.5px] font-bold leading-tight text-black">
+                        <span class="uppercase tracking-wide font-black text-[10.5px]">NEZO FACTORY</span>
+                        <span>Jl.Cikuda no.13 Rt 4/ 11</span>
+                        <span>Kel.Pasirbiru Kec.Cibiru</span>
+                        <span>Kota Bandung 40615</span>
+                    </div>
+                </div>
+
+                <!-- 2. Transaction Code Box -->
+                <div class="border-crisp py-2 px-2 text-center bg-white">
+                    <h1 id="previewTrx" class="text-lg font-black tracking-tight uppercase text-black">
+                        KODE: TRX-NZ-00001
+                    </h1>
+                </div>
+
+                <!-- 3. Recipient Information Box -->
+                <div class="border-crisp p-2.5 flex flex-col gap-1 text-[11px] font-bold bg-white text-black">
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Penerima:</span>
+                        <span id="previewPenerima" class="flex-1 font-black truncate">[Nama Penerima]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">WhatsApp:</span>
+                        <span id="previewWhatsapp" class="flex-1 font-black truncate">[WhatsApp / HP]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Alamat Lengkap:</span>
+                        <span id="previewAlamat" class="flex-1 font-black truncate">[Alamat Lengkap]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Kelurahan:</span>
+                        <span id="previewKelurahan" class="flex-1 font-black truncate">[Kelurahan]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Kecamatan:</span>
+                        <span id="previewKecamatan" class="flex-1 font-black truncate">[Kecamatan]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Kota / Kab:</span>
+                        <span id="previewKota" class="flex-1 font-black truncate">[Kota / Kab]</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-28 text-black shrink-0">Provinsi:</span>
+                        <span id="previewProvinsi" class="flex-1 font-black truncate">[Provinsi]</span>
+                    </div>
+                </div>
+
+                <!-- 4. Sender Information Box -->
+                <div class="border-crisp p-2.5 text-[11px] font-bold leading-tight bg-white text-black">
+                    <div class="font-black">Pengirim: NEZO FACTORY</div>
+                    <div class="mt-0.5">08998116726</div>
+                </div>
+
+                <!-- 5. Additional Notes Box -->
+                <div class="border-crisp p-2.5 flex flex-col flex-1 bg-white text-black">
+                    <div class="text-[10.5px] font-black uppercase mb-1">Catatan Tambahan:</div>
+                    <div id="previewCatatan" class="text-[10.5px] font-semibold text-black leading-snug break-words"></div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="no-print bg-slate-900 border-t border-slate-800 py-3 text-center text-xs text-slate-500">
+        &copy; 2026 NEZO FACTORY Logistics. Standard A6 (105mm x 148mm) Thermal Label Studio.
+    </footer>
+
+    <script>
+        function updateLabel() {
+            const trx = document.getElementById('inputTrx').value.trim();
+            const penerima = document.getElementById('inputPenerima').value.trim();
+            const whatsapp = document.getElementById('inputWhatsapp').value.trim();
+            const alamat = document.getElementById('inputAlamat').value.trim();
+            const kelurahan = document.getElementById('inputKelurahan').value.trim();
+            const kecamatan = document.getElementById('inputKecamatan').value.trim();
+            const kota = document.getElementById('inputKota').value.trim();
+            const provinsi = document.getElementById('inputProvinsi').value.trim();
+            const catatan = document.getElementById('inputCatatan').value.trim();
+
+            document.getElementById('previewTrx').innerText = `KODE: ${trx || 'TRX-NZ-00001'}`;
+            document.getElementById('previewPenerima').innerText = penerima || '[Tampilkan Nama Penerima]';
+            document.getElementById('previewWhatsapp').innerText = whatsapp || '[WhatsApp]';
+            document.getElementById('previewAlamat').innerText = alamat || '[Alamat Lengkap]';
+            document.getElementById('previewKelurahan').innerText = kelurahan || '[Kelurahan]';
+            document.getElementById('previewKecamatan').innerText = kecamatan || '[Kecamatan]';
+            document.getElementById('previewKota').innerText = kota || '[Kota / Kab]';
+            document.getElementById('previewProvinsi').innerText = provinsi || '[Provinsi]';
+            document.getElementById('previewCatatan').innerText = catatan;
+        }
+
+        function loadSampleData() {
+            document.getElementById('inputTrx').value = 'TRX-NZ-99104';
+            document.getElementById('inputPenerima').value = 'Andi Wijaya';
+            document.getElementById('inputWhatsapp').value = '082112345678';
+            document.getElementById('inputAlamat').value = 'Jl. Asia Afrika No. 88 (Samping Bank Mandiri)';
+            document.getElementById('inputKelurahan').value = 'Braga';
+            document.getElementById('inputKecamatan').value = 'Sumur Bandung';
+            document.getElementById('inputKota').value = 'Kota Bandung';
+            document.getElementById('inputProvinsi').value = 'Jawa Barat';
+            document.getElementById('inputCatatan').value = 'Paket Jersey Tim Futsal (12 Pcs). Jangan dilipat & simpan di tempat kering.';
+            updateLabel();
+        }
+
+        function resetForm() {
+            document.getElementById('labelForm').reset();
+            document.getElementById('inputTrx').value = 'TRX-NZ-00001';
+            updateLabel();
+        }
+
+        window.onload = function() {
+            updateLabel();
+        }
+    </script>
+</body>
+</html>

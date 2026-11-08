@@ -25,6 +25,14 @@
 
         <div class="flex items-center gap-2">
           <button 
+            @click="processToAdminOrders"
+            class="text-xs font-black px-3.5 py-1.5 rounded-lg bg-nezo-lime text-slate-950 hover:bg-lime-400 transition-colors flex items-center gap-1.5 shadow"
+            title="Konversi rincian pesanan ini ke Dashboard Admin"
+          >
+            <PlusCircle class="w-3.5 h-3.5 text-slate-950" />
+            <span>+ Masukkan ke Data Pesanan</span>
+          </button>
+          <button 
             @click="catalogStore.navigateTo('catalog')"
             class="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 transition-colors flex items-center gap-1.5"
           >
@@ -364,14 +372,16 @@
 import { computed } from 'vue'
 import { useCatalogStore } from '../stores/catalog'
 import { useLocaleStore } from '../stores/locale'
+import { useOrdersStore } from '../stores/orders'
 import { 
   ArrowLeft, Tag, Layers, CheckCircle2, Maximize2, Download, Copy,
   ClipboardCheck, Scissors, Sparkles, Ruler, Boxes, Shield, FileText,
-  MessageCircle, ArrowRight 
+  MessageCircle, ArrowRight, PlusCircle 
 } from 'lucide-vue-next'
 
 const catalogStore = useCatalogStore()
 const localeStore = useLocaleStore()
+const ordersStore = useOrdersStore()
 
 // Read order details from store
 const order = computed(() => catalogStore.currentOrderDetail || {})
@@ -473,6 +483,20 @@ ${typeof window !== 'undefined' ? window.location.href : ''}
 ==============================`
 
   catalogStore.copyToClipboard(slipText, localeStore.t('orderSummaryCopied'))
+}
+
+const processToAdminOrders = () => {
+  const draft = ordersStore.prepareOrderFromCustomerInquiry({
+    product: targetProduct.value,
+    cut: orderCut.value,
+    fabric: orderFabric.value,
+    size: orderSize.value,
+    qty: orderQty.value,
+    teamName: orderTeam.value,
+    notes: orderNotes.value
+  })
+  ordersStore.activeDraft = draft
+  catalogStore.navigateTo('admin')
 }
 
 const openReplyWhatsApp = () => {

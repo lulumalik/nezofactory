@@ -1,10 +1,14 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50 text-slate-900 font-sans pb-16 lg:pb-0">
+  <div class="min-h-screen flex flex-col bg-gray-50 text-slate-900 font-sans pb-16 lg:pb-0 app-root-layout">
     <!-- Header with Top Banner and Category Nav -->
-    <AppHeader />
+    <AppHeader 
+      v-if="catalogStore.currentView !== 'admin'" 
+      @open-admin-login="isGlobalAdminLoginOpen = true" 
+      class="app-header-print-hide"
+    />
 
     <!-- Main Content Dynamic View -->
-    <main class="flex-1">
+    <main class="flex-1 app-main-content">
       <!-- VIEW 1: HOME PAGE (Matahari Landing Experience) -->
       <div v-if="catalogStore.currentView === 'home'">
         <!-- 1. Matahari-style Big Hero Promotion -->
@@ -32,21 +36,46 @@
       <div v-else-if="catalogStore.currentView === 'order'">
         <OrderDetailPage />
       </div>
+
+      <!-- VIEW 4: ADMIN PORTAL & DATA PESANAN -->
+      <div v-else-if="catalogStore.currentView === 'admin'">
+        <AdminDashboard v-if="ordersStore.isLoggedIn" />
+        <div v-else class="min-h-screen flex items-center justify-center bg-slate-950 p-4">
+          <AdminLoginModal :is-open="true" @close="catalogStore.navigateTo('home')" />
+        </div>
+      </div>
     </main>
 
     <!-- Footer -->
-    <AppFooter />
+    <AppFooter 
+      v-if="catalogStore.currentView !== 'admin'" 
+      @open-admin-login="isGlobalAdminLoginOpen = true" 
+      class="app-footer-print-hide"
+    />
 
     <!-- Fixed Mobile Bottom Navigation Bar (App Experience) -->
-    <AppBottomNav />
+    <AppBottomNav 
+      v-if="catalogStore.currentView !== 'admin'" 
+      @open-admin-login="isGlobalAdminLoginOpen = true" 
+      class="app-nav-print-hide"
+    />
 
     <!-- Interactive Modals -->
     <ProductDetailModal />
     <WhatsAppModal />
     <ImageZoomModal />
 
+    <!-- Admin Operational Document Modals -->
+    <SpkModal />
+    <InvoiceModal />
+    <ShippingLabelModal />
+    <AdminLoginModal 
+      :is-open="isGlobalAdminLoginOpen" 
+      @close="isGlobalAdminLoginOpen = false" 
+    />
+
     <!-- Floating Action WhatsApp Button (Desktop only) -->
-    <FloatingWhatsApp />
+    <FloatingWhatsApp v-if="catalogStore.currentView !== 'admin'" />
 
     <!-- Global Toast Notification -->
     <transition name="toast-fade">
@@ -62,8 +91,9 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCatalogStore } from './stores/catalog'
+import { useOrdersStore } from './stores/orders'
 import AppHeader from './components/AppHeader.vue'
 import AppBottomNav from './components/AppBottomNav.vue'
 import HeroPromotion from './components/HeroPromotion.vue'
@@ -78,9 +108,17 @@ import ProductDetailModal from './components/ProductDetailModal.vue'
 import WhatsAppModal from './components/WhatsAppModal.vue'
 import ImageZoomModal from './components/ImageZoomModal.vue'
 import FloatingWhatsApp from './components/FloatingWhatsApp.vue'
+import AdminDashboard from './components/admin/AdminDashboard.vue'
+import AdminLoginModal from './components/admin/AdminLoginModal.vue'
+import SpkModal from './components/admin/SpkModal.vue'
+import InvoiceModal from './components/admin/InvoiceModal.vue'
+import ShippingLabelModal from './components/admin/ShippingLabelModal.vue'
 import { CheckCircle2 } from 'lucide-vue-next'
 
 const catalogStore = useCatalogStore()
+const ordersStore = useOrdersStore()
+
+const isGlobalAdminLoginOpen = ref(false)
 
 onMounted(() => {
   catalogStore.initRouting()

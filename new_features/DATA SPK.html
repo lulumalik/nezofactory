@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEZO FACTORY - Surat Perintah Kerja (SPK)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #1e293b;
+        }
+
+        /* Fixed paper container sized to strict 1-page printable proportion */
+        .spk-paper {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 12mm;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        /* Aspect ratio 1080 x 1350 px (4:5 aspect ratio) */
+        .mockup-box-ratio {
+            aspect-ratio: 1080 / 1350;
+        }
+
+        /* Printable single-page optimization */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .spk-paper {
+                width: 210mm !important;
+                height: 297mm !important;
+                box-shadow: none !important;
+                padding: 8mm 10mm !important;
+                margin: 0 !important;
+                border: none !important;
+            }
+            .excel-table-wrapper {
+                overflow: visible !important;
+                max-height: none !important;
+            }
+            input, select {
+                border-color: #cbd5e1 !important;
+                background-color: transparent !important;
+            }
+        }
+
+        .excel-table-wrapper::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .excel-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="py-6 px-2 flex flex-col items-center min-h-screen">
+
+    <!-- Action Bar / Navigation -->
+    <div class="w-[210mm] max-w-full flex justify-between items-center mb-4 no-print px-1">
+        <div class="flex items-center gap-2">
+            <span class="bg-amber-500 text-slate-950 text-xs font-black px-2.5 py-1 rounded">NEZO FACTORY</span>
+            <span class="text-slate-300 text-xs font-semibold">Sistem SPK Garment & Apparel</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="resetForm()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-left"></i> Reset Form
+            </button>
+            <button onclick="window.print()" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold rounded-lg shadow-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf text-sm"></i> Simpan PDF (1 Halaman)
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Paper Document -->
+    <div class="spk-paper text-slate-900 border border-slate-200 rounded-lg">
+        <div>
+            <!-- Banner Document Header -->
+            <div class="bg-slate-950 text-white p-3 rounded-lg flex justify-between items-center border-b-4 border-amber-500 mb-3 shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <div class="bg-amber-500 text-slate-950 font-black px-3 py-1 rounded text-xl">NEZO</div>
+                    <div>
+                        <h1 class="text-base font-black tracking-wide leading-tight uppercase">SURAT PERINTAH KERJA (SPK)</h1>
+                        <p class="text-[9px] text-slate-400 tracking-widest uppercase">PRODUCTION ORDER SHEET - NEZO FACTORY</p>
+                    </div>
+                </div>
+                <div class="text-right text-[10px] space-y-0.5 bg-slate-900 p-2 rounded border border-slate-800">
+                    <div class="flex gap-2 justify-end items-center">
+                        <span class="text-slate-400 font-semibold">NO. SPK:</span>
+                        <input type="text" id="spk-no" value="SPK/NEZO/2026/001" class="bg-transparent font-bold text-amber-400 text-right w-32 focus:outline-none">
+                    </div>
+                    <div class="flex gap-2 justify-end items-center">
+                        <span class="text-slate-400 font-semibold">TGL ORDER:</span>
+                        <input type="date" id="spk-date" class="bg-transparent font-bold text-white text-right focus:outline-none">
+                    </div>
+                    <div class="flex gap-2 justify-end items-center">
+                        <span class="text-slate-400 font-semibold">DEADLINE:</span>
+                        <input type="date" id="spk-deadline" class="bg-transparent font-bold text-amber-400 text-right focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 1: 3 Image Upload Boxes (1080 x 1350 Aspect Ratio) -->
+            <div class="mb-3">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="text-[11px] font-black text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                        <i class="fa-solid fa-images text-amber-500"></i> 1. MOCKUP DESAIN / SAMPLE (1080 x 1350 PX)
+                    </h2>
+                    <span class="text-[9px] text-slate-500 italic no-print">Klik atau seret file gambar ke dalam 3 kotak</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <!-- Box 1 -->
+                    <div id="drop-zone-1" 
+                         onclick="triggerFileInput(1)"
+                         ondragover="handleDragOver(event, 1)"
+                         ondragleave="handleDragLeave(event, 1)"
+                         ondrop="handleDrop(event, 1)"
+                         class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg mockup-box-ratio flex flex-col items-center justify-center overflow-hidden hover:border-amber-500 transition group cursor-pointer">
+                        <input type="file" id="img-input-1" accept="image/*" class="hidden" onchange="previewImage(this, 1)">
+                        <div id="placeholder-1" class="text-center p-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl text-slate-400 group-hover:text-amber-500 mb-1 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-700">DESAIN DEPAN</p>
+                            <p class="text-[8px] text-slate-400">1080 x 1350 px</p>
+                        </div>
+                        <img id="preview-1" class="hidden w-full h-full object-cover rounded-lg" alt="Mockup Depan">
+                        <button onclick="event.stopPropagation(); removeImage(1)" class="no-print absolute top-1.5 right-1.5 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] hidden group-hover:flex hover:bg-rose-700 transition" title="Hapus Gambar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Box 2 -->
+                    <div id="drop-zone-2" 
+                         onclick="triggerFileInput(2)"
+                         ondragover="handleDragOver(event, 2)"
+                         ondragleave="handleDragLeave(event, 2)"
+                         ondrop="handleDrop(event, 2)"
+                         class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg mockup-box-ratio flex flex-col items-center justify-center overflow-hidden hover:border-amber-500 transition group cursor-pointer">
+                        <input type="file" id="img-input-2" accept="image/*" class="hidden" onchange="previewImage(this, 2)">
+                        <div id="placeholder-2" class="text-center p-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl text-slate-400 group-hover:text-amber-500 mb-1 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-700">DESAIN BELAKANG</p>
+                            <p class="text-[8px] text-slate-400">1080 x 1350 px</p>
+                        </div>
+                        <img id="preview-2" class="hidden w-full h-full object-cover rounded-lg" alt="Mockup Belakang">
+                        <button onclick="event.stopPropagation(); removeImage(2)" class="no-print absolute top-1.5 right-1.5 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] hidden group-hover:flex hover:bg-rose-700 transition" title="Hapus Gambar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Box 3 -->
+                    <div id="drop-zone-3" 
+                         onclick="triggerFileInput(3)"
+                         ondragover="handleDragOver(event, 3)"
+                         ondragleave="handleDragLeave(event, 3)"
+                         ondrop="handleDrop(event, 3)"
+                         class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg mockup-box-ratio flex flex-col items-center justify-center overflow-hidden hover:border-amber-500 transition group cursor-pointer">
+                        <input type="file" id="img-input-3" accept="image/*" class="hidden" onchange="previewImage(this, 3)">
+                        <div id="placeholder-3" class="text-center p-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl text-slate-400 group-hover:text-amber-500 mb-1 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-700">DETAIL LOGO / KERAH</p>
+                            <p class="text-[8px] text-slate-400">1080 x 1350 px</p>
+                        </div>
+                        <img id="preview-3" class="hidden w-full h-full object-cover rounded-lg" alt="Detail Logo">
+                        <button onclick="event.stopPropagation(); removeImage(3)" class="no-print absolute top-1.5 right-1.5 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] hidden group-hover:flex hover:bg-rose-700 transition" title="Hapus Gambar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Column Layout for SPK Options and Excel Roster -->
+            <div class="grid grid-cols-12 gap-3 items-start">
+                
+                <!-- LEFT COLUMN (ITEMS 2 - 9) -->
+                <div class="col-span-5 space-y-2">
+                    
+                    <!-- 2. Nama Team -->
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <label class="block text-[10px] font-extrabold text-slate-800 uppercase mb-1">
+                            2. NAMA TEAM / CUSTOMER
+                        </label>
+                        <input type="text" id="team-name" value="NEZO CHAMPION FC" placeholder="Nama Tim / Pelanggan" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    </div>
+
+                    <!-- 3. Bahan -->
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <label class="block text-[10px] font-extrabold text-slate-800 uppercase mb-1">
+                            3. BAHAN
+                        </label>
+                        <div class="grid grid-cols-2 gap-1">
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="bahan" value="MILANO" checked class="accent-amber-500">
+                                <span>MILANO</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="bahan" value="BRAZIL" class="accent-amber-500">
+                                <span>BRAZIL</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="bahan" value="SERENA" class="accent-amber-500">
+                                <span>SERENA</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="bahan" value="EMBOS" class="accent-amber-500">
+                                <span>EMBOS</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 4. Produk -->
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <label class="block text-[10px] font-extrabold text-slate-800 uppercase mb-1">
+                            4. PRODUK
+                        </label>
+                        <div class="grid grid-cols-2 gap-1">
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="produk" value="ATASAN" checked class="accent-amber-500">
+                                <span>ATASAN</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="produk" value="SETELAN" class="accent-amber-500">
+                                <span>SETELAN</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="produk" value="JAKET" class="accent-amber-500">
+                                <span>JAKET</span>
+                            </label>
+                            <label class="flex items-center space-x-1.5 p-1 bg-white border border-slate-200 rounded cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="radio" name="produk" value="TRAINNING" class="accent-amber-500">
+                                <span>TRAINNING</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 5 & 6. Kerah & Lengan -->
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div class="bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            <label class="block text-[9px] font-extrabold text-slate-800 uppercase mb-0.5">5. MODEL KERAH</label>
+                            <select id="model-kerah" class="w-full bg-white border border-slate-300 rounded p-1 text-[10px] font-bold text-slate-800 focus:outline-none">
+                                <option value="V-NECK">V-NECK</option>
+                                <option value="O-NECK">O-NECK</option>
+                                <option value="WANGKI KANCING">WANGKI KANCING</option>
+                                <option value="V-WANGI PALANG">V-WANGI PALANG</option>
+                                <option value="V-ADIDAS">V-ADIDAS</option>
+                                <option value="V-WANGKI TALI">V-WANGKI TALI</option>
+                            </select>
+                        </div>
+
+                        <div class="bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            <label class="block text-[9px] font-extrabold text-slate-800 uppercase mb-0.5">6. MODEL LENGAN</label>
+                            <select id="model-lengan" class="w-full bg-white border border-slate-300 rounded p-1 text-[10px] font-bold text-slate-800 focus:outline-none">
+                                <option value="T.PENDEK">T.PENDEK</option>
+                                <option value="T.PANJANG">T.PANJANG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 7. Ukuran Anak -->
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-extrabold text-slate-800 uppercase">7. UKURAN ANAK</label>
+                            <span id="subtotal-anak" class="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">6 Pcs</span>
+                        </div>
+                        <div class="grid grid-cols-6 gap-1 text-center">
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">XS</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">S</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">M</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">L</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">XL</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">2XL</span>
+                                <input type="number" min="0" value="1" data-size-group="child" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Ukuran Dewasa -->
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-extrabold text-slate-800 uppercase">8. UKURAN DEWASA</label>
+                            <span id="subtotal-dewasa" class="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">8 Pcs</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1 text-center">
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">S</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">M</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">L</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">XL</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">2XL</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">3XL</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">4XL</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-500 block">5XL</span>
+                                <input type="number" min="0" value="1" data-size-group="adult" class="w-full bg-white border border-slate-300 rounded text-center py-0.5 text-xs font-bold" onchange="calculateTotals()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. Total Otomatis -->
+                    <div class="bg-slate-950 text-white p-2.5 rounded-lg flex justify-between items-center border-b-2 border-amber-500">
+                        <div>
+                            <span class="text-[9px] font-bold text-slate-400 block uppercase">9. TOTAL KESELURUHAN</span>
+                            <span class="text-[8px] text-amber-400 font-medium">Otomatis Terhitung (Anak + Dewasa)</span>
+                        </div>
+                        <div id="grand-total" class="text-xl font-black text-amber-400">14 PCS</div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN (ITEMS 10 - 11) -->
+                <div class="col-span-7 bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex flex-col justify-between h-full min-h-[460px]">
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div>
+                                <h3 class="text-[10px] font-black text-slate-900 uppercase">10 & 11. TABEL DETAIL ROSTER PEMAIN</h3>
+                                <p class="text-[8px] text-slate-500">Format Kotak Excel (NO, NAMA, UKURAN, NOPUNG, KETERANGAN)</p>
+                            </div>
+                            <div class="flex gap-1 no-print">
+                                <button onclick="addRow()" class="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold rounded flex items-center gap-1 shadow-sm">
+                                    <i class="fa-solid fa-plus text-amber-400"></i> Baris
+                                </button>
+                                <button onclick="addColumn()" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-[10px] font-bold rounded flex items-center gap-1">
+                                    <i class="fa-solid fa-square-plus"></i> Kolom
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Excel Editable Table -->
+                        <div class="excel-table-wrapper overflow-x-auto border border-slate-300 rounded bg-white">
+                            <table class="w-full text-left border-collapse text-xs" id="excel-table">
+                                <thead id="table-head">
+                                    <tr class="bg-slate-900 text-white text-[9px] uppercase">
+                                        <th class="p-1 border-r border-slate-700 w-8 text-center">NO</th>
+                                        <th class="p-1 border-r border-slate-700 min-w-[120px]">NAMA</th>
+                                        <th class="p-1 border-r border-slate-700 w-24 text-center">UKURAN</th>
+                                        <th class="p-1 border-r border-slate-700 w-16 text-center">NOPUNG</th>
+                                        <th class="p-1 border-r border-slate-700 min-w-[100px]">KETERANGAN</th>
+                                        <th class="p-1 w-8 text-center no-print">AKSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body" class="divide-y divide-slate-200">
+                                    <!-- Dynamic rows loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-[8px] text-slate-500 flex justify-between items-center no-print">
+                        <button onclick="addRow()" class="text-amber-600 font-bold hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-circle-plus"></i> + Tambah Pemain Baru
+                        </button>
+                        <span>Format Disesuaikan Untuk Cetak 1 Halaman PDF</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Document Footer Stamp -->
+        <div class="pt-2 mt-2 border-t border-slate-200 flex justify-between items-center text-[8px] text-slate-500">
+            <span class="font-bold text-slate-700">NEZO FACTORY GARMENT - SURAT PERINTAH KERJA (SPK)</span>
+            <span>Halaman 1 Dari 1 (PDF Ready)</span>
+        </div>
+    </div>
+
+    <script>
+        let extraColumns = [];
+
+        // Pre-loaded Roster Data
+        const samplePlayers = [
+            { name: "NEZO PLAYER 1", size: "L Dewasa", number: "10", note: "Kapten / L.Pendek" },
+            { name: "NEZO PLAYER 2", size: "M Dewasa", number: "07", note: "L.Pendek" },
+            { name: "NEZO PLAYER 3", size: "XL Dewasa", number: "01", note: "Kiper / L.Panjang" },
+            { name: "NEZO PLAYER 4", size: "M Anak", number: "09", note: "Anak / L.Pendek" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Default SPK Dates
+            const today = new Date();
+            const formatDate = (d) => d.toISOString().split('T')[0];
+            document.getElementById('spk-date').value = formatDate(today);
+            
+            const deadline = new Date();
+            deadline.setDate(today.getDate() + 7);
+            document.getElementById('spk-deadline').value = formatDate(deadline);
+
+            // Render default roster
+            samplePlayers.forEach(p => addRowWithData(p.name, p.size, p.number, p.note));
+            calculateTotals();
+        });
+
+        /* --- 1. Image Upload & Drag-and-Drop Logic --- */
+        function triggerFileInput(index) {
+            document.getElementById(`img-input-${index}`).click();
+        }
+
+        function handleDragOver(e, index) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropZone = document.getElementById(`drop-zone-${index}`);
+            dropZone.classList.add('border-amber-500', 'bg-amber-50');
+        }
+
+        function handleDragLeave(e, index) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropZone = document.getElementById(`drop-zone-${index}`);
+            dropZone.classList.remove('border-amber-500', 'bg-amber-50');
+        }
+
+        function handleDrop(e, index) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropZone = document.getElementById(`drop-zone-${index}`);
+            dropZone.classList.remove('border-amber-500', 'bg-amber-50');
+
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                const file = e.dataTransfer.files[0];
+                displayImageFile(file, index);
+            }
+        }
+
+        function previewImage(input, index) {
+            if (input.files && input.files[0]) {
+                displayImageFile(input.files[0], index);
+            }
+        }
+
+        function displayImageFile(file, index) {
+            if (!file.type.startsWith('image/')) {
+                alert("Harap pilih file gambar!");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById(`preview-${index}`);
+                const placeholder = document.getElementById(`placeholder-${index}`);
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(index) {
+            document.getElementById(`img-input-${index}`).value = '';
+            const img = document.getElementById(`preview-${index}`);
+            const placeholder = document.getElementById(`placeholder-${index}`);
+            img.src = '';
+            img.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+        }
+
+        /* --- 2. Dynamic Excel Roster Table --- */
+        function addRow() {
+            addRowWithData('', 'L Dewasa', '', '');
+        }
+
+        function addRowWithData(name = '', size = 'L Dewasa', number = '', note = '') {
+            const tbody = document.getElementById('table-body');
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition";
+
+            let extraTdHtml = '';
+            extraColumns.forEach(col => {
+                extraTdHtml += `<td class="p-0.5 border-r border-slate-200"><input type="text" placeholder="${col}" class="w-full bg-slate-50 border border-slate-200 rounded px-1 py-0.5 text-[10px] focus:bg-white focus:outline-none"></td>`;
+            });
+
+            tr.innerHTML = `
+                <td class="p-0.5 border-r border-slate-200 text-center font-bold text-slate-500 row-no text-[10px]"></td>
+                <td class="p-0.5 border-r border-slate-200"><input type="text" value="${name}" placeholder="Nama Pemain" class="w-full bg-slate-50 border border-slate-200 rounded px-1 py-0.5 text-[10px] font-semibold focus:bg-white focus:outline-none"></td>
+                <td class="p-0.5 border-r border-slate-200">
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded p-0.5 text-[10px] font-bold text-slate-800 focus:bg-white focus:outline-none">
+                        <option value="XS Anak" ${size === 'XS Anak' ? 'selected' : ''}>XS Anak</option>
+                        <option value="S Anak" ${size === 'S Anak' ? 'selected' : ''}>S Anak</option>
+                        <option value="M Anak" ${size === 'M Anak' ? 'selected' : ''}>M Anak</option>
+                        <option value="L Anak" ${size === 'L Anak' ? 'selected' : ''}>L Anak</option>
+                        <option value="XL Anak" ${size === 'XL Anak' ? 'selected' : ''}>XL Anak</option>
+                        <option value="2XL Anak" ${size === '2XL Anak' ? 'selected' : ''}>2XL Anak</option>
+                        <option value="S Dewasa" ${size === 'S Dewasa' ? 'selected' : ''}>S Dewasa</option>
+                        <option value="M Dewasa" ${size === 'M Dewasa' ? 'selected' : ''}>M Dewasa</option>
+                        <option value="L Dewasa" ${size === 'L Dewasa' ? 'selected' : ''}>L Dewasa</option>
+                        <option value="XL Dewasa" ${size === 'XL Dewasa' ? 'selected' : ''}>XL Dewasa</option>
+                        <option value="2XL Dewasa" ${size === '2XL Dewasa' ? 'selected' : ''}>2XL Dewasa</option>
+                        <option value="3XL Dewasa" ${size === '3XL Dewasa' ? 'selected' : ''}>3XL Dewasa</option>
+                        <option value="4XL Dewasa" ${size === '4XL Dewasa' ? 'selected' : ''}>4XL Dewasa</option>
+                        <option value="5XL Dewasa" ${size === '5XL Dewasa' ? 'selected' : ''}>5XL Dewasa</option>
+                    </select>
+                </td>
+                <td class="p-0.5 border-r border-slate-200"><input type="text" value="${number}" placeholder="00" class="w-full bg-slate-50 border border-slate-200 rounded text-center py-0.5 text-[10px] font-bold focus:bg-white focus:outline-none"></td>
+                <td class="p-0.5 border-r border-slate-200"><input type="text" value="${note}" placeholder="Keterangan" class="w-full bg-slate-50 border border-slate-200 rounded px-1 py-0.5 text-[10px] focus:bg-white focus:outline-none"></td>
+                ${extraTdHtml}
+                <td class="p-0.5 text-center no-print">
+                    <button onclick="deleteRow(this)" class="w-4 h-4 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded transition inline-flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-[9px]"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            reindexRows();
+        }
+
+        function addColumn() {
+            const colName = prompt("Nama Kolom Baru (Misal: Posisi / Celana / Kaos Kaki):");
+            if (!colName || colName.trim() === '') return;
+
+            extraColumns.push(colName.trim());
+
+            // Header update
+            const headerRow = document.querySelector('#table-head tr');
+            const actionTh = headerRow.lastElementChild;
+            actionTh.remove();
+
+            const newTh = document.createElement('th');
+            newTh.className = "p-1 border-r border-slate-700 min-w-[80px]";
+            newTh.textContent = colName.toUpperCase();
+            headerRow.appendChild(newTh);
+            headerRow.appendChild(actionTh);
+
+            // Rows update
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach(row => {
+                const actionTd = row.lastElementChild;
+                actionTd.remove();
+
+                const newTd = document.createElement('td');
+                newTd.className = "p-0.5 border-r border-slate-200";
+                newTd.innerHTML = `<input type="text" placeholder="${colName}" class="w-full bg-slate-50 border border-slate-200 rounded px-1 py-0.5 text-[10px] focus:bg-white focus:outline-none">`;
+                row.appendChild(newTd);
+                row.appendChild(actionTd);
+            });
+        }
+
+        function deleteRow(btn) {
+            btn.closest('tr').remove();
+            reindexRows();
+        }
+
+        function reindexRows() {
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach((row, index) => {
+                row.querySelector('.row-no').textContent = index + 1;
+            });
+        }
+
+        /* --- 3. Automatic Total Calculations --- */
+        function calculateTotals() {
+            let childTotal = 0;
+            let adultTotal = 0;
+
+            document.querySelectorAll('input[data-size-group="child"]').forEach(input => {
+                childTotal += parseInt(input.value) || 0;
+            });
+
+            document.querySelectorAll('input[data-size-group="adult"]').forEach(input => {
+                adultTotal += parseInt(input.value) || 0;
+            });
+
+            document.getElementById('subtotal-anak').textContent = `${childTotal} Pcs`;
+            document.getElementById('subtotal-dewasa').textContent = `${adultTotal} Pcs`;
+
+            const grandTotal = childTotal + adultTotal;
+            document.getElementById('grand-total').textContent = `${grandTotal} PCS`;
+        }
+
+        function resetForm() {
+            if (confirm("Reset seluruh isi formulir SPK NEZO FACTORY?")) {
+                document.getElementById('team-name').value = '';
+                document.querySelectorAll('input[data-size-group="child"]').forEach(i => i.value = 1);
+                document.querySelectorAll('input[data-size-group="adult"]').forEach(i => i.value = 1);
+                removeImage(1);
+                removeImage(2);
+                removeImage(3);
+                document.getElementById('table-body').innerHTML = '';
+                samplePlayers.forEach(p => addRowWithData(p.name, p.size, p.number, p.note));
+                calculateTotals();
+            }
+        }
+    </script>
+</body>
+</html>
