@@ -729,19 +729,23 @@ const saveNewOrder = async () => {
     return
   }
 
-  const newOrder = await ordersStore.addOrder({
-    date: formOrder.value.date,
-    team: formOrder.value.team,
-    contact: formOrder.value.contact,
-    notes: formOrder.value.notes,
-    images: [...formOrder.value.images],
-    items: activeItems,
-    total: formOrderTotalAmount.value
-  })
+  try {
+    const newOrder = await ordersStore.addOrder({
+      date: formOrder.value.date,
+      team: formOrder.value.team,
+      contact: formOrder.value.contact,
+      notes: formOrder.value.notes,
+      images: [...formOrder.value.images],
+      items: activeItems,
+      total: formOrderTotalAmount.value
+    })
 
-  catalogStore.showToast(`Pesanan ${newOrder.id} berhasil disimpan!`)
-  resetOrderForm()
-  activeTab.value = 'orders'
+    catalogStore.showToast(`Pesanan ${newOrder.id} berhasil disimpan!`)
+    resetOrderForm()
+    activeTab.value = 'orders'
+  } catch (err) {
+    alert(err?.message || 'Gagal menyimpan pesanan. Periksa koneksi atau konfigurasi tenant.')
+  }
 }
 
 const editDate = (order) => {

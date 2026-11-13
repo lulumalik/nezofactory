@@ -47,6 +47,102 @@ export const useOrdersStore = defineStore('orders', () => {
   const isCloudConnected = ref(false)
   const errorMessage = ref('')
 
+  // Tenant State (resolved from window.location.hostname -> tenants.domain, with VITE_TENANT_ID fallback)
+  const envTenantId = (import.meta.env.VITE_TENANT_ID || '').trim()
+  const tenant = ref(null)
+  const tenantId = ref(envTenantId)
+  let tenantResolvePromise = null
+
+  const validateTenantRecord = (record) => {
+    if (!record) return false
+    if (record.is_active === false) {
+      errorMessage.value = `Tenant "${record.name || record.id}" sedang tidak aktif.`
+      return false
+    }
+    if (record.expired_at && new Date(record.expired_at) < new Date()) {
+      errorMessage.value = `Masa aktif tenant "${record.name || record.id}" telah berakhir.`
+      return false
+    }
+    return true
+  }
+
+  const resolveTenant = async () => {
+    if (!supabase) {
+      return tenantId.value || 'local'
+    }
+
+    if (tenant.value?.id) {
+      return tenant.value.id
+    }
+
+    if (tenantResolvePromise) {
+      return tenantResolvePromise
+    }
+
+    tenantResolvePromise = (async () => {
+      try {
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+
+        if (hostname) {
+          const { data: domainTenant, error: domainError } = await supabase
+            .from('tenants')
+            .select('id, name, domain, is_active, expired_at')
+            .eq('domain', hostname)
+            .maybeSingle()
+
+          if (!domainError && domainTenant) {
+            if (!validateTenantRecord(domainTenant)) {
+              tenant.value = null
+              tenantId.value = ''
+              return null
+            }
+            tenant.value = domainTenant
+            tenantId.value = domainTenant.id
+            return domainTenant.id
+          }
+        }
+
+        if (envTenantId) {
+          const { data: fallbackTenant, error: fallbackError } = await supabase
+            .from('tenants')
+            .select('id, name, domain, is_active, expired_at')
+            .eq('id', envTenantId)
+            .maybeSingle()
+
+          if (!fallbackError && fallbackTenant) {
+            if (!validateTenantRecord(fallbackTenant)) {
+              tenant.value = null
+              tenantId.value = ''
+              return null
+            }
+            tenant.value = fallbackTenant
+            tenantId.value = fallbackTenant.id
+            return fallbackTenant.id
+          }
+
+          // Fallback to envTenantId directly if tenants table has restrictive RLS
+          tenantId.value = envTenantId
+          return envTenantId
+        }
+
+        errorMessage.value = `Tenant untuk domain "${hostname || '-'}" tidak ditemukan. Daftarkan domain di tabel "tenants" atau atur VITE_TENANT_ID di .env.`
+        return null
+      } catch (err) {
+        console.error('Tenant resolution error:', err)
+        if (envTenantId) {
+          tenantId.value = envTenantId
+          return envTenantId
+        }
+        errorMessage.value = err?.message || 'Gagal memuat data tenant'
+        return null
+      } finally {
+        tenantResolvePromise = null
+      }
+    })()
+
+    return tenantResolvePromise
+  }
+
   const login = (username, password) => {
     if (username.trim().toLowerCase() === 'admin' && password === 'nezo123') {
       sessionStorage.setItem('nezoLoggedIn', '1')
@@ -67,6 +163,7 @@ export const useOrdersStore = defineStore('orders', () => {
   // Transform row from Supabase (snake_case) to client model (camelCase)
   const mapFromSupabase = (row) => ({
     id: row.id,
+    tenantId: row.tenant_id || '',
     date: row.date || getTodayDateString(),
     deadline: row.deadline || '',
     team: row.team || '',
@@ -100,6 +197,7 @@ export const useOrdersStore = defineStore('orders', () => {
   // Transform client model (camelCase) to Supabase row (snake_case)
   const mapToSupabase = (order) => ({
     ...(order.id ? { id: order.id } : {}),
+    tenant_id: order.tenantId || tenantId.value || null,
     date: order.date,
     deadline: order.deadline || null,
     team: order.team,
@@ -141,9 +239,18 @@ export const useOrdersStore = defineStore('orders', () => {
     try {
       isLoading.value = true
       errorMessage.value = ''
+
+      const activeTenantId = await resolveTenant()
+      if (!activeTenantId) {
+        orders.value = []
+        isCloudConnected.value = false
+        return
+      }
+
       const { data, error } = await supabase
         .from('orders')
         .select('*')
+        .eq('tenant_id', activeTenantId)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -210,11 +317,17 @@ export const useOrdersStore = defineStore('orders', () => {
 
   // Pure Online CRUD: Directly into Supabase
   const addOrder = async (orderData) => {
+    const activeTenantId = await resolveTenant()
+    if (supabase && !activeTenantId) {
+      throw new Error(errorMessage.value || 'Tenant tidak ditemukan.')
+    }
+
     // Let the database sequence assign IDs so stale forms and concurrent inserts
     // cannot generate the same primary key.
     const id = supabase ? null : (orderData.id || getNextTrxId())
     const newOrder = {
       id,
+      tenantId: orderData.tenantId || activeTenantId || '',
       date: orderData.date || getTodayDateString(),
       deadline: orderData.deadline || '',
       team: (orderData.team || '').trim(),
@@ -273,9 +386,16 @@ export const useOrdersStore = defineStore('orders', () => {
   const updateOrder = async (id, updatedFields) => {
     const idx = orders.value.findIndex(o => o.id === id)
     if (idx !== -1) {
+      const activeTenantId = await resolveTenant()
+      if (supabase && !activeTenantId) {
+        console.error('Supabase update aborted: tenant_id tidak ditemukan')
+        return null
+      }
+
       const merged = {
         ...orders.value[idx],
         ...updatedFields,
+        tenantId: updatedFields.tenantId || orders.value[idx].tenantId || activeTenantId || '',
         updatedAt: new Date().toISOString()
       }
       orders.value[idx] = merged
@@ -283,9 +403,17 @@ export const useOrdersStore = defineStore('orders', () => {
       if (supabase) {
         try {
           const payload = mapToSupabase(merged)
-          const { error } = await supabase.from('orders').update(payload).eq('id', id)
-          if (error) console.error('Supabase update error:', error)
+          const { error } = await supabase
+            .from('orders')
+            .update(payload)
+            .eq('id', id)
+            .eq('tenant_id', merged.tenantId)
+          if (error) {
+            errorMessage.value = error.message
+            console.error('Supabase update error:', error)
+          }
         } catch (e) {
+          errorMessage.value = e?.message || 'Gagal mengupdate pesanan'
           console.error('Supabase update exception:', e)
         }
       }
@@ -296,13 +424,23 @@ export const useOrdersStore = defineStore('orders', () => {
   }
 
   const deleteOrder = async (id) => {
+    const targetOrder = orders.value.find(o => o.id === id)
     orders.value = orders.value.filter(o => o.id !== id)
 
     if (supabase) {
       try {
-        const { error } = await supabase.from('orders').delete().eq('id', id)
-        if (error) console.error('Supabase delete error:', error)
+        const activeTenantId = targetOrder?.tenantId || (await resolveTenant())
+        let query = supabase.from('orders').delete().eq('id', id)
+        if (activeTenantId) {
+          query = query.eq('tenant_id', activeTenantId)
+        }
+        const { error } = await query
+        if (error) {
+          errorMessage.value = error.message
+          console.error('Supabase delete error:', error)
+        }
       } catch (e) {
+        errorMessage.value = e?.message || 'Gagal menghapus pesanan'
         console.error('Supabase delete exception:', e)
       }
     }
@@ -421,6 +559,9 @@ export const useOrdersStore = defineStore('orders', () => {
     isLoading,
     isCloudConnected,
     errorMessage,
+    tenant,
+    tenantId,
+    resolveTenant,
     login,
     logout,
     orders,
